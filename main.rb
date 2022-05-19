@@ -1,28 +1,29 @@
+require 'pry'
+
 class Tree
   attr_accessor :root, :array
 
   def initialize(array)
     @root = nil
+    @left = nil
+    @right = nil
     @array = array
   end
 
-  def build_tree(array)
+  def build_tree(array, start, finish)
     # base case is wrong somehow, its stackoverflow on line 18
-    return if array.length <= 0
+    return if start > finish
 
     # set middle value to root
-    mid = (array.length / 2)
+    mid = (start + finish) / 2 
     node = Node.new(array[mid])
 
     # RECURSIVE
-    node.left = build_tree(array[0..mid - 1])
-    node.right = build_tree(array[mid + 1..-1])
-  end
+    binding.pry
+    node.left = build_tree(array[0..mid - 1], start, mid - 1)
+    node.right = build_tree(array[mid + 1..-1], start, mid - 1) # this is broken
 
-  def pretty_print(node = @root, prefix = '', is_left = true)
-    pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
-    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
-    pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
+    node
   end
 end
 
@@ -36,12 +37,8 @@ class Node
   end
 end
 
-array = [1, 9, 2, 3, 6, 5]
+array = [1, 2, 3, 5, 6, 7, 9]
+mid = 3
 tree = Tree.new(array)
-tree.build_tree(array.sort)
-# Algorithm
-# 1. Get an array
-# 2. Find midpoint of array
-# 3. Set midpoint to root
-# 4. recursively find midpoint of left side and right side
-# 5. steps 2-4
+last_index = array.length - 1 # 6
+tree.build_tree(array, 0, last_index)
