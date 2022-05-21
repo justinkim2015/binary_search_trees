@@ -18,29 +18,47 @@ class Tree
     node
   end
 
-  # still broken but getting there
+  # third loop is getting popped without getting read
   def bft 
     return if @root.nil?
 
+    # binding.pry
     queue = []
     array = []
-    queue << @root
+    queue.unshift @root
     until queue.empty?
       current = queue[0]
       array << current.data
-      queue.unshift current.left unless current.left.nil?
-      queue.unshift current.right unless current.right.nil?
-      queue.pop
+      queue << current.left unless current.left.nil?
+      queue << current.right unless current.right.nil?
+      queue.shift
     end
     array
   end
 
-  def insert(value)
-    current = @root
-    nxt = @root
-    until current.value == value
-      current = nxt
+  def dft(root, array = [])
+    return if root.nil?
+
+    # binding.pry
+    dft(root.left, array)
+    array << root.data
+    dft(root.right, array)
+    array
+  end
+
+  def insert(root, value)
+    if root.nil?
+      root = Node.new(value)
+    else
+      if root.data == value
+        root
+      elsif root.data < value
+        root.right = insert(root.right, value)
+      elsif root.data > value
+        root.left = insert(root.left, value)
+      end
     end
+    root
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -66,5 +84,6 @@ rand(10).times do
   array << rand(100)
 end
 tree = Tree.new(arr)
+# p tree.dft(tree.root)
+tree.insert(tree.root, 10)
 tree.pretty_print
-tree.bft
