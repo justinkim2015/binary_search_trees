@@ -18,8 +18,7 @@ class Tree
     node
   end
 
-  # third loop is getting popped without getting read
-  def level_order 
+  def level_order
     return if @root.nil?
 
     queue = []
@@ -27,21 +26,33 @@ class Tree
     queue.unshift @root
     until queue.empty?
       current = queue[0]
-      array << current.data
+      if block_given?
+        yield current.data
+      else
+        array << current.data
+      end
       queue << current.left unless current.left.nil?
       queue << current.right unless current.right.nil?
       queue.shift
     end
-    array
+    array unless block_given?
   end
 
+  # Block is only being passed to the first version of the recursion
+  # Figure out how to pass the block as a parameter into the recursion (&?)
   def pre_order(root, array = [])
     return if root.nil?
 
-    array << root.data
-    pre_order(root.left, array)
-    pre_order(root.right, array)
-    array
+    if block_given?
+      yield root.data
+      pre_order(root.left, array)
+      pre_order(root.right, array)
+    else
+      array << root.data
+      pre_order(root.left, array)
+      pre_order(root.right, array)
+      array
+    end
   end
 
   def in_order(root, array = [])
@@ -127,13 +138,6 @@ class Node
 end
 
 arr = [1, 2, 3, 5, 6, 7, 9]
-array = []
-rand(10).times do
-  array << rand(100)
-end
 tree = Tree.new(arr)
-# tree.insert(tree.root, 10)
 # tree.pretty_print
-# tree.delete(tree.root, 5)
-p tree.find(tree.root, 5)
-# p tree.find_level_order(2)
+p tree.pre_order(tree.root) {|num| p num}
