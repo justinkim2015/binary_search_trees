@@ -19,10 +19,9 @@ class Tree
   end
 
   # third loop is getting popped without getting read
-  def bft 
+  def level_order 
     return if @root.nil?
 
-    # binding.pry
     queue = []
     array = []
     queue.unshift @root
@@ -36,29 +35,78 @@ class Tree
     array
   end
 
-  def dft(root, array = [])
+  def pre_order(root, array = [])
     return if root.nil?
 
-    # binding.pry
-    dft(root.left, array)
     array << root.data
-    dft(root.right, array)
+    pre_order(root.left, array)
+    pre_order(root.right, array)
+    array
+  end
+
+  def in_order(root, array = [])
+    return if root.nil?
+
+    in_order(root.left, array)
+    array << root.data
+    in_order(root.right, array)
+    array
+  end
+
+  def post_order(root, array = [])
+    return if root.nil?
+
+    post_order(root.left, array)
+    post_order(root.right, array)
+    array << root.data
     array
   end
 
   def insert(root, value)
     if root.nil?
       root = Node.new(value)
-    else
-      if root.data == value
-        root
-      elsif root.data < value
-        root.right = insert(root.right, value)
-      elsif root.data > value
-        root.left = insert(root.left, value)
-      end
+    elsif root.data == value
+      root
+    elsif root.data < value
+      root.right = insert(root.right, value)
+    elsif root.data > value
+      root.left = insert(root.left, value)
     end
     root
+  end
+
+  def delete(root, value)
+    return if root.nil?
+
+    # binding.pry
+    if value < root.data
+      root.left = delete(root.left, value)
+    elsif value > root.data
+      root.right = delete(root.right, value)
+    elsif root.left.nil?
+      temp = root.right
+      root = temp
+    elsif root.right.nil?
+      temp = root.left
+      root = temp
+    else
+      temp = in_order(root.right).min
+      root.data = temp
+      root.right = delete(root.right, temp)
+    end
+    root
+  end
+
+  def find(root, value)
+    return if root.nil?
+
+    root if root.data == value
+
+    node = find(root.left, value)
+    if node.nil?
+      node = find(root.right, value)
+    end
+    node
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -84,6 +132,8 @@ rand(10).times do
   array << rand(100)
 end
 tree = Tree.new(arr)
-# p tree.dft(tree.root)
-tree.insert(tree.root, 10)
-tree.pretty_print
+# tree.insert(tree.root, 10)
+# tree.pretty_print
+# tree.delete(tree.root, 5)
+p tree.find(tree.root, 5)
+# p tree.find_level_order(2)
