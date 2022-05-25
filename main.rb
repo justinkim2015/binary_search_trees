@@ -137,6 +137,20 @@ class Tree
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
+
+  def height(root)
+    return -1 if root.nil?
+
+    max_l = height(root.left)
+    max_r = height(root.right)
+    if max_l > max_r
+      max_l + 1
+    else
+      max_r + 1
+    end
+  end
+
+  def 
 end
 
 class Node
@@ -152,8 +166,9 @@ end
 arr = [1, 2, 3, 5, 6, 7, 9]
 tree = Tree.new(arr)
 # tree.pretty_print
-lambda = ->(num) { puts "number is #{num}"}
+# lambda = ->(num) { puts "number is #{num}"}
 # tree.pre_order(tree.root, [], lambda)
-# p tree.pre_order(tree.root)
 # tree.in_order(tree.root, [], lambda)
-tree.post_order(tree.root, [], lambda)
+# tree.post_order(tree.root, [], lambda)
+p "Height of tree is #{tree.height(tree.root)}"
+p "Depth of tree is #{tree.depth(tree.root)}"
