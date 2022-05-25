@@ -5,16 +5,19 @@ class Tree
 
   def initialize(array)
     @array = array.sort.uniq
-    @root = build_tree(@array, 0, @array.length - 1)
+    @root = build_tree(array)
   end
 
-  def build_tree(array, start, finish)
-    return if start > finish
+  # Missing depth 3 right child
+  def build_tree(array)
+    return nil if array.empty?
 
-    mid = (start + finish) / 2
+    mid = (array.length - 1) / 2
     node = Node.new(array[mid])
-    node.left = build_tree(array[0..mid - 1], start, mid - 1)
-    node.right = build_tree(array[mid + 1..-1], start, mid - 1)
+
+    node.left = build_tree(array[0...mid])
+    node.right = build_tree(array[(mid + 1)..-1])
+
     node
   end
 
@@ -38,8 +41,6 @@ class Tree
     array unless block_given?
   end
 
-  # Block is only being passed to the first version of the recursion
-  # Figure out how to pass the block as a parameter into the recursion (&?)
   def pre_order(root, array = [], block = nil)
     return if root.nil?
 
@@ -150,7 +151,42 @@ class Tree
     end
   end
 
-  def 
+  # Not finished
+  def depth(root)
+    return 1 if root.nil?
+
+    dep_l = depth(root.left)
+    dep_r = depth(root.right)
+    if dep_l > dep_r
+      dep_l - 1
+    else
+      dep_r - 1
+    end
+  end
+
+  def balanced?
+    if height(@root.left) == height(@root.right)
+      balance = true
+    elsif height(@root.left) + 1 == height(@root.right)
+      balance = true
+    elsif height(@root.left) == height(@root.right) + 1
+      balance = true
+    else
+      balance = false
+    end
+
+    if balance == true
+      puts 'The tree is balanced'
+    else
+      puts 'The tree is not balanced'
+    end
+  end
+
+  # I don't know why this isnt working, maybe my build tree method is broken
+  def rebalance
+    new_arr = in_order(@root).sort.uniq
+    @root = build_tree(new_arr)
+  end
 end
 
 class Node
@@ -163,12 +199,15 @@ class Node
   end
 end
 
-arr = [1, 2, 3, 5, 6, 7, 9]
-tree = Tree.new(arr)
-# tree.pretty_print
+array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+tree = Tree.new(array)
 # lambda = ->(num) { puts "number is #{num}"}
-# tree.pre_order(tree.root, [], lambda)
-# tree.in_order(tree.root, [], lambda)
-# tree.post_order(tree.root, [], lambda)
-p "Height of tree is #{tree.height(tree.root)}"
-p "Depth of tree is #{tree.depth(tree.root)}"
+tree.pretty_print
+5.times do
+  tree.insert(tree.root, rand(100))
+end
+tree.balanced?
+tree.pretty_print
+tree.rebalance
+tree.pretty_print
+tree.balanced?
