@@ -40,13 +40,13 @@ class Tree
 
   # Block is only being passed to the first version of the recursion
   # Figure out how to pass the block as a parameter into the recursion (&?)
-  def pre_order(root, array = [])
+  def pre_order(root, array = [], block = nil)
     return if root.nil?
 
-    if block_given?
-      yield root.data
-      pre_order(root.left, array)
-      pre_order(root.right, array)
+    if !block.nil?
+      block.call(root.data)
+      pre_order(root.left, [], block)
+      pre_order(root.right, [], block)
     else
       array << root.data
       pre_order(root.left, array)
@@ -55,22 +55,34 @@ class Tree
     end
   end
 
-  def in_order(root, array = [])
+  def in_order(root, array = [], block = nil)
     return if root.nil?
 
-    in_order(root.left, array)
-    array << root.data
-    in_order(root.right, array)
-    array
+    if !block.nil?
+      in_order(root.left, [], block)
+      block.call(root.data)
+      in_order(root.right, [], block)
+    else
+      in_order(root.left, array)
+      array << root.data
+      in_order(root.right, array)
+      array
+    end
   end
 
-  def post_order(root, array = [])
+  def post_order(root, array = [], block = nil)
     return if root.nil?
 
-    post_order(root.left, array)
-    post_order(root.right, array)
-    array << root.data
-    array
+    if !block.nil?
+      post_order(root.left, [], block)
+      post_order(root.right, [], block)
+      block.call(root.data)
+    else
+      post_order(root.left, array)
+      post_order(root.right, array)
+      array << root.data
+      array
+    end
   end
 
   def insert(root, value)
@@ -140,4 +152,8 @@ end
 arr = [1, 2, 3, 5, 6, 7, 9]
 tree = Tree.new(arr)
 # tree.pretty_print
-p tree.pre_order(tree.root) {|num| p num}
+lambda = ->(num) { puts "number is #{num}"}
+# tree.pre_order(tree.root, [], lambda)
+# p tree.pre_order(tree.root)
+# tree.in_order(tree.root, [], lambda)
+tree.post_order(tree.root, [], lambda)
