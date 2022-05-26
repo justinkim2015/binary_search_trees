@@ -8,7 +8,7 @@ class Tree
 
   # Missing depth 3 right child
   def build_tree(array)
-    return nil if array.empty?
+    return if array.empty?
 
     mid = (array.length - 1) / 2
     node = Node.new(array[mid])
@@ -39,7 +39,7 @@ class Tree
     array unless block_given?
   end
 
-  def pre_order(root, array = [], block = nil)
+  def pre_order(root = @root, array = [], block = nil)
     return if root.nil?
 
     if !block.nil?
@@ -54,7 +54,7 @@ class Tree
     end
   end
 
-  def in_order(root, array = [], block = nil)
+  def in_order(root = @root, array = [], block = nil)
     return if root.nil?
 
     if !block.nil?
@@ -69,7 +69,7 @@ class Tree
     end
   end
 
-  def post_order(root, array = [], block = nil)
+  def post_order(root = @root, array = [], block = nil)
     return if root.nil?
 
     if !block.nil?
@@ -100,7 +100,6 @@ class Tree
   def delete(root, value)
     return if root.nil?
 
-    # binding.pry
     if value < root.data
       root.left = delete(root.left, value)
     elsif value > root.data
@@ -125,9 +124,7 @@ class Tree
     root if root.data == value
 
     node = find(root.left, value)
-    if node.nil?
-      node = find(root.right, value)
-    end
+    node = find(root.right, value) if node.nil?
     node
   end
 

@@ -8,9 +8,9 @@ tree.balanced?
 
 tree.level_order
 
-p tree.pre_order(tree.root)
-p tree.in_order(tree.root)
-p tree.post_order(tree.root)
+p tree.pre_order
+p tree.in_order
+p tree.post_order
 
 100.times do
   tree.insert(tree.root, rand(100))
@@ -20,6 +20,6 @@ tree.balanced?
 tree.rebalance
 tree.balanced?
 
-p tree.pre_order(tree.root)
-p tree.in_order(tree.root)
-p tree.post_order(tree.root)
+p tree.pre_order
+p tree.in_order
+p tree.post_order
